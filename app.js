@@ -136,6 +136,7 @@ var Globalcontroller = (function(bdgtController,uiController){
         init: function(){
             console.log("Application is ready to be used!");
             allSetUp();
+    //hjsdjashdkhaskhkashdkhksjzdbcjdsbfjb
         }
         //this is a random comment
         
