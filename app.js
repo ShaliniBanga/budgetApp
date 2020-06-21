@@ -13,6 +13,7 @@ var UIcontroller = (function(){
     //4. Make the same public to make it access from anywhere
     return{
         addItem: function(){
+            //This is a function
             return{
                 type : document.querySelector('.add__type').value,
                 description : document.querySelector('.add__description').value,
@@ -136,6 +137,7 @@ var Globalcontroller = (function(bdgtController,uiController){
             console.log("Application is ready to be used!");
             allSetUp();
         }
+        //this is a random comment
         
     }
     
