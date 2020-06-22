@@ -136,9 +136,8 @@ var Globalcontroller = (function(bdgtController,uiController){
         init: function(){
             console.log("Application is ready to be used!");
             allSetUp();
-    //hjsdjashdkhaskhkashdkhksjzdbcjdsbfjb
         }
-        //this is a random comment
+        
         
     }
     
@@ -149,9 +148,7 @@ var Globalcontroller = (function(bdgtController,uiController){
        var addedItem = uiController.addItem();
             if(addedItem.description !="" && addedItem.amount>0 && !isNaN(addedItem.amount))
                 {
-                    
-                
-        //console.log(addedItem);
+        
         
         //3. Store the new Data
         var newData = bdgtController.updateData(addedItem.type,addedItem.description,addedItem.amount);
