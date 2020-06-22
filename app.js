@@ -17,7 +17,7 @@ var UIcontroller = (function(){
             return{
                 type : document.querySelector('.add__type').value,
                 description : document.querySelector('.add__description').value,
-                amount : document.querySelector('.add__value').value
+                amount : parseFloat(document.querySelector('.add__value').value)
             };
             
         },
@@ -147,6 +147,10 @@ var Globalcontroller = (function(bdgtController,uiController){
         //2. Extract data from UI
         
        var addedItem = uiController.addItem();
+            if(addedItem.description !="" && addedItem.amount>0 && !isNaN(addedItem.amount))
+                {
+                    
+                
         //console.log(addedItem);
         
         //3. Store the new Data
@@ -158,6 +162,7 @@ var Globalcontroller = (function(bdgtController,uiController){
             
         // CLearing the Input Fields
         uiController.clearFields();
+                }
         
     }
     
