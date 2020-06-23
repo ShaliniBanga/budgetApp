@@ -108,6 +108,38 @@ var Budgetcontroller = (function(){
                 console.log(data.allItems.exp);
             }
             return newItem;
+        },
+        
+        updateBudget: function(type)
+        {
+            var incsum=0;
+            var expsum=0;
+            if(type==='inc')
+                {
+                    data.allItems[type].forEach(function(current){
+                        incsum+=current.amount;
+                        data.totals[type]=incsum;
+                        //console.log(incsum);
+                        console.log(data.totals[type]);
+                    })
+                }
+            
+            else if(type=='exp'){
+                data.allItems[type].forEach(function(current){;
+                expsum+=current.amount;
+                data.totals[type]=expsum;
+                //console.log(expsum);
+                console.log(data.totals[type]);
+                                                              
+                                                              
+            })
+        }
+            
+    },
+        finalBudget: function(){
+            var budget=0;
+            budget=data.totals.inc-data.totals.exp;
+            console.log(budget);
         }
     }
     
@@ -159,6 +191,12 @@ var Globalcontroller = (function(bdgtController,uiController){
             
         // CLearing the Input Fields
         uiController.clearFields();
+        
+        //Updating the income and expense
+        bdgtController.updateBudget(addedItem.type);
+        
+        //Updating the final budget
+        bdgtController.finalBudget();
                 }
         
     }
