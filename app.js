@@ -52,6 +52,24 @@ var UIcontroller = (function(){
                 current.value = "";
             })
             eleArr[0].focus();
+        },
+        
+        updateBudgetUI: function(ob){
+            var signInc,signExp,signBudget;
+            ob.totalinc >= 0 ? signInc = "+" : signInc = "-";
+            ob.totalexp >= 0 ? signExp = "-" : signExp = "+";
+            document.querySelector('.budget__income--value').textContent = signInc+" "+ob.totalinc;
+            document.querySelector('.budget__expenses--value').textContent = signExp+" "+ob.totalexp;
+            if (ob.budget > 0){
+             document.querySelector('.budget__value').textContent = "+ "+ob.budget;   
+            }
+            else document.querySelector('.budget__value').textContent = ob.budget;
+            
+            if(ob.percentage > 0){
+                document.querySelector('.budget__expenses--percentage').textContent = ob.percentage + "%";
+            }
+        
+            
         }
         
             
@@ -87,7 +105,9 @@ var Budgetcontroller = (function(){
         },
         totals: {
             exp: 0,
-            inc: 0
+            inc: 0,
+            budget: 0,
+            percentage : -1
         }
     };
     return{
@@ -134,12 +154,19 @@ var Budgetcontroller = (function(){
                                                               
             })
         }
+            data.totals.budget = data.totals.inc-data.totals.exp;
+            data.totals.percentage = Math.round((data.totals.exp/data.totals.inc)*100);
             
     },
-        finalBudget: function(){
-            var budget=0;
-            budget=data.totals.inc-data.totals.exp;
-            console.log(budget);
+        
+        
+        getBudget: function(){
+            return{
+                totalinc:data.totals.inc,
+                totalexp: data.totals.exp,
+                budget: data.totals.budget,
+                percentage: data.totals.percentage
+            }
         }
     }
     
@@ -167,6 +194,11 @@ var Globalcontroller = (function(bdgtController,uiController){
         // starting the app
         init: function(){
             console.log("Application is ready to be used!");
+            document.querySelector('.budget__income--value').textContent = 0;
+            document.querySelector('.budget__expenses--value').textContent = 0;
+            document.querySelector('.budget__value').textContent = 0;
+            document.querySelector('.budget__expenses--percentage').textContent = -1 + " %";
+        
             allSetUp();
         }
         
@@ -192,11 +224,14 @@ var Globalcontroller = (function(bdgtController,uiController){
         // CLearing the Input Fields
         uiController.clearFields();
         
-        //Updating the income and expense
+        //Updating the income and expense and the final budget
         bdgtController.updateBudget(addedItem.type);
         
-        //Updating the final budget
-        bdgtController.finalBudget();
+        //Updating the budget in UI
+        var updateBudget = bdgtController.getBudget();
+                    
+        uiController.updateBudgetUI(updateBudget);
+        
                 }
         
     }
