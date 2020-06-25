@@ -25,11 +25,11 @@ var UIcontroller = (function(){
         addtoUI: function(obj, type){
             if (type === 'inc'){
                 var elementSection = document.querySelector(".income__list");
-                var html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">+ %amount%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                var html = '<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">+ %amount%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
             else{
                 var elementSection = document.querySelector(".expenses__list");
-                var html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">- %amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                var html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">- %amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
             //replaving the actual values
             var newHTML = html.replace('%id%',obj.id);
@@ -54,6 +54,7 @@ var UIcontroller = (function(){
             eleArr[0].focus();
         },
         
+
         updateBudgetUI: function(ob){
             var signInc,signExp,signBudget;
             ob.totalinc >= 0 ? signInc = "+" : signInc = "-";
@@ -68,8 +69,15 @@ var UIcontroller = (function(){
             if(ob.percentage > 0){
                 document.querySelector('.budget__expenses--percentage').textContent = ob.percentage + "%";
             }
+        },
         
             
+
+        deleteFromUI: function(delID){
+            
+            var parentDel = document.getElementById(delID);
+            parentDel.parentNode.removeChild(parentDel);
+
         }
         
             
@@ -138,26 +146,32 @@ var Budgetcontroller = (function(){
                 {
                     data.allItems[type].forEach(function(current){
                         incsum+=current.amount;
-                        data.totals[type]=incsum;
-                        //console.log(incsum);
+                        
+                        console.log(incsum);
                         console.log(data.totals[type]);
                     })
+                    data.totals[type]=incsum;
                 }
             
             else if(type=='exp'){
                 data.allItems[type].forEach(function(current){;
                 expsum+=current.amount;
-                data.totals[type]=expsum;
-                //console.log(expsum);
+                
+                console.log(expsum);
                 console.log(data.totals[type]);
                                                               
                                                               
             })
+                data.totals[type]=expsum;
         }
             data.totals.budget = data.totals.inc-data.totals.exp;
+            if (data.totals.inc > 0)
             data.totals.percentage = Math.round((data.totals.exp/data.totals.inc)*100);
+            else
+            data.totals.percentage = -1;
             
     },
+
         
         
         getBudget: function(){
@@ -166,8 +180,27 @@ var Budgetcontroller = (function(){
                 totalexp: data.totals.exp,
                 budget: data.totals.budget,
                 percentage: data.totals.percentage
-            }
+                }
+            },
+
+        finalBudget: function(){
+            var budget=0;
+            budget=data.totals.inc-data.totals.exp;
+            console.log(budget);
+        },
+        
+        deleteItems: function(type, id){
+            
+            var ID = data.allItems[type].map(function(current){
+                return current.id;
+            })
+            var delID = ID.indexOf(id);
+            data.allItems[type].splice(delID,1);
+            console.log(data.allItems[type]);
+
         }
+        
+        
     }
     
     
@@ -185,26 +218,15 @@ var Globalcontroller = (function(bdgtController,uiController){
             document.addEventListener('keypress',function(Event){
             if (Event.keyCode === 13 || Event.which === 13)
             ctrlAdditem();
-    })  
             
-            
-        }
-            
-    return {
-        // starting the app
-        init: function(){
-            console.log("Application is ready to be used!");
-            document.querySelector('.budget__income--value').textContent = 0;
-            document.querySelector('.budget__expenses--value').textContent = 0;
-            document.querySelector('.budget__value').textContent = 0;
-            document.querySelector('.budget__expenses--percentage').textContent = -1 + " %";
-        
-            allSetUp();
-        }
-        
-        
+            })
+            document.querySelector('.container').addEventListener('click',ctrlDelItem); 
     }
+            
+            
+
     
+            
         //5. clickEvent function
         function ctrlAdditem(){
         //2. Extract data from UI
@@ -235,6 +257,45 @@ var Globalcontroller = (function(bdgtController,uiController){
                 }
         
     }
+    
+    var ctrlDelItem = function(Event){
+    var eleTarget = Event.target.parentNode.parentNode.parentNode.parentNode.id;
+    var arrEle = eleTarget.split("-");
+    var type = arrEle[0];
+    var value = parseInt(arrEle[1]);
+    console.log(type, value);
+        
+    
+    //1. create a function for deletion from backend
+    bdgtController.deleteItems(type,value);
+        
+    //2. create a funtion to delete from UI
+    uiController.deleteFromUI(eleTarget);
+        
+    //3. update the budget accordingly from backend
+    bdgtController.updateBudget(type);   
+        
+    //4. display the updated budget
+    var editBudget = bdgtController.getBudget();
+    uiController.updateBudgetUI(editBudget);
+    
+        
+    }
+    
+    
+      return {
+        // starting the app
+        init: function(){
+            console.log("Application is ready to be used!");
+            document.querySelector('.budget__income--value').textContent = 0;
+            document.querySelector('.budget__expenses--value').textContent = 0;
+            document.querySelector('.budget__value').textContent = 0;
+            document.querySelector('.budget__expenses--percentage').textContent = -1 + " %";
+            allSetUp();
+
+        } 
+      }
+    
     
 })(Budgetcontroller,UIcontroller);
 Globalcontroller.init();
