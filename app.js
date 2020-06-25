@@ -183,11 +183,7 @@ var Budgetcontroller = (function(){
                 }
             },
 
-        finalBudget: function(){
-            var budget=0;
-            budget=data.totals.inc-data.totals.exp;
-            console.log(budget);
-        },
+        
         
         deleteItems: function(type, id){
             
