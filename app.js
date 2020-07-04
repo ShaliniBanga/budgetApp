@@ -78,6 +78,27 @@ var UIcontroller = (function(){
             var parentDel = document.getElementById(delID);
             parentDel.parentNode.removeChild(parentDel);
 
+        },
+        
+        updatePercentage: function(arr){
+            var node=document.querySelectorAll('.item__percentage');
+            var nodearray=Array.prototype.slice.call(node);
+            nodearray.forEach(function(cur,index){
+                cur.textContent=arr[index] + " %";
+            })
+        },
+        
+        updateMonth : function(){
+            var year = new Date().getFullYear();
+            var month = new Date().getMonth();
+            //console.log(month.getMonth());
+            var m = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+            var displayMonth = m[month];
+            document.querySelector('.budget__title--month').textContent=displayMonth + " " + year;
+        },
+        
+        formatNumber : function(){
+            
         }
         
             
@@ -105,6 +126,18 @@ var Budgetcontroller = (function(){
         this.description = description;
         this.amount = amount;
     };
+    
+    Expense.prototype.percentageExpense=function(){
+        if(data.totals.inc>0){
+        this.percentage = Math.round((this.amount/data.totals.inc)*100);
+        }
+        else 
+            {
+                this.percentage= -1;
+            }
+        return this.percentage;
+            
+    }
     //3. Data Structure to keep a track of the changes
     var data = {
         allItems: {
@@ -194,6 +227,17 @@ var Budgetcontroller = (function(){
             data.allItems[type].splice(delID,1);
             console.log(data.allItems[type]);
 
+        },
+        
+        PercentageCalc: function(){
+            
+            var newarray=data.allItems.exp.map(function(current){
+            return current.percentageExpense();
+            
+                
+            })
+            return newarray;
+            
         }
         
         
@@ -210,6 +254,14 @@ var Globalcontroller = (function(bdgtController,uiController){
     function allSetUp(){
             //var checkDesc = document.querySelector('.add__description').value;
             //var checkVal = document.querySelector('.add__value').value;
+            document.querySelector('.add__type').addEventListener('change',function(){
+                document.querySelector('.add__type').classList.toggle('red-focus');
+                document.querySelector('.add__description').classList.toggle('red-focus');
+                document.querySelector('.add__value').classList.toggle('red-focus');
+                document.querySelector('.add__btn').classList.toggle('red');
+
+
+            })
             document.querySelector('.add__btn').addEventListener('click',ctrlAdditem);
             document.addEventListener('keypress',function(Event){
             if (Event.keyCode === 13 || Event.which === 13)
@@ -249,6 +301,13 @@ var Globalcontroller = (function(bdgtController,uiController){
         var updateBudget = bdgtController.getBudget();
                     
         uiController.updateBudgetUI(updateBudget);
+                    
+        //Calculating the individual percentage ans storing in an array
+        var allPerc=bdgtController.PercentageCalc();
+        console.log(allPerc);
+                    
+        // display the individula percentages in UI
+        uiController.updatePercentage(allPerc);
         
                 }
         
@@ -274,6 +333,14 @@ var Globalcontroller = (function(bdgtController,uiController){
     //4. display the updated budget
     var editBudget = bdgtController.getBudget();
     uiController.updateBudgetUI(editBudget);
+        
+    //Calculating the individual percentage ans storing in an array
+        var allPerc=bdgtController.PercentageCalc();
+        console.log(allPerc);
+                    
+    // display the individula percentages in UI
+        uiController.updatePercentage(allPerc);
+        
     
         
     }
@@ -287,6 +354,7 @@ var Globalcontroller = (function(bdgtController,uiController){
             document.querySelector('.budget__expenses--value').textContent = 0;
             document.querySelector('.budget__value').textContent = 0;
             document.querySelector('.budget__expenses--percentage').textContent = -1 + " %";
+            uiController.updateMonth();
             allSetUp();
 
         } 
