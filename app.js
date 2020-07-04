@@ -11,6 +11,26 @@ var UIcontroller = (function(){
     
     //3. Read the data from UI + 
     //4. Make the same public to make it access from anywhere
+    
+    function formatNumber(num, type){
+        	num = Math.abs(num);
+            num = num.toFixed(2);
+            console.log(num);
+            var numsplit = num.split('.');
+            console.log(numsplit);
+            var decimal = numsplit[0];
+            if (decimal.length > 3){
+                var printNum = decimal.substr(0,decimal.length - 3)+","+decimal.substr(decimal.length - 3,decimal.length - 1)+"."+numsplit[1];
+                //console.log((type === 'exp' ? '-' : '+') + printNum);
+                return (type === 'exp' ? '-' : '+') + printNum;
+            }
+        else{
+            return (type === 'exp' ? '-' : '+') + num;
+            
+        }
+            
+
+        }
     return{
         addItem: function(){
             //This is a function
@@ -25,16 +45,16 @@ var UIcontroller = (function(){
         addtoUI: function(obj, type){
             if (type === 'inc'){
                 var elementSection = document.querySelector(".income__list");
-                var html = '<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">+ %amount%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                var html = '<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
             else{
                 var elementSection = document.querySelector(".expenses__list");
-                var html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">- %amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                var html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
             //replaving the actual values
             var newHTML = html.replace('%id%',obj.id);
             var newHTML = newHTML.replace('%description%',obj.description);
-            var newHTML = newHTML.replace('%amount%',obj.amount);
+            var newHTML = newHTML.replace('%amount%',formatNumber(obj.amount,type));
             
             // adding it back to the DOM
             elementSection.insertAdjacentHTML('beforeend', newHTML);
@@ -57,14 +77,14 @@ var UIcontroller = (function(){
 
         updateBudgetUI: function(ob){
             var signInc,signExp,signBudget;
-            ob.totalinc >= 0 ? signInc = "+" : signInc = "-";
-            ob.totalexp >= 0 ? signExp = "-" : signExp = "+";
-            document.querySelector('.budget__income--value').textContent = signInc+" "+ob.totalinc;
-            document.querySelector('.budget__expenses--value').textContent = signExp+" "+ob.totalexp;
+            //ob.totalinc >= 0 ? signInc = "+" : signInc = "-";
+            //ob.totalexp >= 0 ? signExp = "-" : signExp = "+";
+            document.querySelector('.budget__income--value').textContent = formatNumber(ob.totalinc,'inc');
+            document.querySelector('.budget__expenses--value').textContent = formatNumber(ob.totalexp,'exp');
             if (ob.budget > 0){
-             document.querySelector('.budget__value').textContent = "+ "+ob.budget;   
+             document.querySelector('.budget__value').textContent = formatNumber(ob.budget,'inc');   
             }
-            else document.querySelector('.budget__value').textContent = ob.budget;
+            else document.querySelector('.budget__value').textContent = formatNumber(ob.budget,'exp');
             
             if(ob.percentage > 0){
                 document.querySelector('.budget__expenses--percentage').textContent = ob.percentage + "%";
@@ -78,6 +98,7 @@ var UIcontroller = (function(){
             var parentDel = document.getElementById(delID);
             parentDel.parentNode.removeChild(parentDel);
 
+<<<<<<< Updated upstream
         },
         
         updatePercentage: function(arr){
@@ -101,14 +122,13 @@ var UIcontroller = (function(){
             
         }
         
+=======
+        }  
+>>>>>>> Stashed changes
             
     }
     
-    
-    
-    
-    
-})();
+ })();
 
 
 //2. for db control
@@ -288,8 +308,10 @@ var Globalcontroller = (function(bdgtController,uiController){
         var newData = bdgtController.updateData(addedItem.type,addedItem.description,addedItem.amount);
         //console.log(newData);
         
+        
         //4. Update the User Interface with Income and Expense
         uiController.addtoUI(newData, addedItem.type);
+        
             
         // CLearing the Input Fields
         uiController.clearFields();
@@ -344,6 +366,7 @@ var Globalcontroller = (function(bdgtController,uiController){
     
         
     }
+
     
     
       return {
