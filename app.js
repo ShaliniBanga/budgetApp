@@ -86,7 +86,7 @@ var UIcontroller = (function(){
             }
             else document.querySelector('.budget__value').textContent = formatNumber(ob.budget,'exp');
             
-            if(ob.percentage > 0){
+            if(ob.percentage >= 0){
                 document.querySelector('.budget__expenses--percentage').textContent = ob.percentage + "%";
             }
         },
@@ -98,7 +98,6 @@ var UIcontroller = (function(){
             var parentDel = document.getElementById(delID);
             parentDel.parentNode.removeChild(parentDel);
 
-<<<<<<< Updated upstream
         },
         
         updatePercentage: function(arr){
@@ -116,15 +115,7 @@ var UIcontroller = (function(){
             var m = ["January","February","March","April","May","June","July","August","September","October","November","December"];
             var displayMonth = m[month];
             document.querySelector('.budget__title--month').textContent=displayMonth + " " + year;
-        },
-        
-        formatNumber : function(){
-            
         }
-        
-=======
-        }  
->>>>>>> Stashed changes
             
     }
     
@@ -206,7 +197,7 @@ var Budgetcontroller = (function(){
                     data.totals[type]=incsum;
                 }
             
-            else if(type=='exp'){
+            else if (type=='exp'){
                 data.allItems[type].forEach(function(current){;
                 expsum+=current.amount;
                 
@@ -221,7 +212,8 @@ var Budgetcontroller = (function(){
             if (data.totals.inc > 0)
             data.totals.percentage = Math.round((data.totals.exp/data.totals.inc)*100);
             else
-            data.totals.percentage = -1;
+            {data.totals.percentage = -1};
+            //console.log(data.totals.percentage);
             
     },
 
@@ -354,6 +346,7 @@ var Globalcontroller = (function(bdgtController,uiController){
         
     //4. display the updated budget
     var editBudget = bdgtController.getBudget();
+    console.log(editBudget);
     uiController.updateBudgetUI(editBudget);
         
     //Calculating the individual percentage ans storing in an array
